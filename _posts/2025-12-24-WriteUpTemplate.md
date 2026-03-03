@@ -21,6 +21,7 @@ yourself later on and for others learning from your work.
 for the website to display correctly. This includes the title, date, description, tags, and categories. Adjust the 
 fields as needed for each write-up and fill in the placeholders with the appropriate information for each challenge.
 ````markdown
+
 ---
 layout: post
 title: ADD TITLE HERE
@@ -28,7 +29,9 @@ date: 2025-11-24 00:01:00
 description: ADD A SHORT DESCRIPTION OF THE WRITE-UP HERE
 tags: writeups <ADD_CATEGORY_TAG_HERE> <ADD_CTF_NAME_TAG_HERE>
 categories: writeups <ADD_CATEGORY_HERE>
+author: YOUR_NAME_HERE
 ---
+
 ````
 - Challenge Overview
   - **Name of the CTF Event**
