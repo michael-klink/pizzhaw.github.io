@@ -13,6 +13,7 @@ author: "Nevos"
 - **CTF Event:** Apoorv CTF 2026
 - **Challenge Name:** Routine Checks
 - **Category:** Forensics
+- **Difficulty** Medium
 - **Description:**  
 *Routine system checks were performed on the city’s communication network after reports of instability.
 Operators sent brief messages between nodes to confirm everything was running smoothly.
