@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Apoorv CTF 2026 - Routine Checks
+title: Apoorv CTF 2026 - Routine Checks (Forensics)
 date: 2026-03-07
 description: Extracting a hidden flag from a JPEG image concealed inside a PCAP capture using Wireshark and steghide
 tags: writeups forensics apoorvctf
