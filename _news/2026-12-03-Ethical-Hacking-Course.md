@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Master of Engineering - Ethical Hacking Course
+title: Master of Science in Engineering - Ethical Hacking Course
 description: Our Master of Engineering program now includes a comprehensive Ethical Hacking course, designed to equip students with the skills and knowledge needed to identify and mitigate cybersecurity threats effectively.
 date: 2026-03-01 09:30:00-0400
 inline: false
