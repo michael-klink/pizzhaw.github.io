@@ -27,15 +27,18 @@ class="img-fluid rounded z-depth-1" max_width="500px"%}
 At the top we have some TCP and HTTP traffic, followed by some MDNS traffic. Then there is again mostly TCP traffic with some TLS in between.
 
 First, I had a look at the HTTP request (packet nr. 4), which is a GET request to an endpoint `/instructions.hello`:
+
 ```
 GET /instructions.hello HTTP/1.1
 Host: awake.utctf.local
 User-Agent: half-awake-client/1.0
 Accept-Encoding: gzip, xor
 ```
+
 This looked quite promising, since the name of the endpoint includes "instructions", so hopefully the response contains some useful information.
 
 In the corresponsing response (packet nr. 6) I then found the following information:
+
 ```
 Read this slowly:
 1) mDNS names are hints: alert.chunk, chef.decode, key.version
@@ -48,6 +51,7 @@ Read this slowly:
 The first hint probably refers to the three MDNS packets (nr. 8 - 10). Looking at the individual packets in more detail I couldn't find any useful information, so probably only the names themselves are relevant.
 
 The name `alert.chunk` looked interesting. Combining it with hint number 3, I then thought that there may be a packet "alert" with some useful payload. Looking through the entire traffic I found an "Encrypted Alert" in packet nr. 36. The hex dump of the payload looked like this:
+
 ```
 0030                                    50 4b 03 04 14
 0040   00 00 00 08 00 aa ba 6b 5c eb 92 16 71 2e 00 00
@@ -73,6 +77,7 @@ The name `alert.chunk` looked interesting. Combining it with hint number 3, I th
 ```
 
 The first two bytes `50 4b` translated into ASCII symbols is actually `PK`, so according to hint number 3 this payload should be treated as a file. Now the question arose, which file type? A quick research on the internet revealed that a file that starts with `50 4b 03 04` is a ZIP file. So, I copied the payload and created a new file `alert.zip`. This file contained two different files. A `readme.txt` and a `stage2.bin`. The readme contained just the following information:
+
 ```
 not everything here is encrypted the same way
 ```
@@ -80,11 +85,13 @@ not everything here is encrypted the same way
 For now I didn't know exactly what to do with this information, but maybe it will become important later.
 
 The file `stage2.bin` contained the following hex values:
+
 ```
 75 c3 66 db 61 d0 7b df 34 db 66 e8 61 c0 34 dc 33 e8 73 84 33 e8 74 df 33 e8 70 c5 30 c3 30 d4 30 db 5f c3 72 86 63 dc 7d
 ```
 
 Translated into ASCII symbols I got the following:
+
 ```
 uÃfÛaÐ{ß4ÛfèaÀ4Ü3ès3ètß3èpÅ0Ã0Ô0Û_ÃrcÜ}
 ```
@@ -92,6 +99,7 @@ uÃfÛaÐ{ß4ÛfèaÀ4Ü3ès3ètß3èpÅ0Ã0Ô0Û_ÃrcÜ}
 On the first glace this didn't make much sense. The only thing that looked promising are the `{` and `}`, which may be a hint that it includes the flag. Looking back at the information in the readme, I came to the conclusion that the content of `stage2.bin` is probably encrypted somehow. Since I didn't have a key yet, I went back to Wireshark and the initial hints.
 
 Hint number two states that not every TCP packet is what it pretends to be, so I had a look at all of the TCP packets. All packets have length 54, except for packet nr. 30, which has length 99, so I had a detailed look at that packet first. In there I found the following information:
+
 ```
 *client_hello-ish_bytes___Agbogbloshie___
 ```
@@ -99,8 +107,9 @@ Hint number two states that not every TCP packet is what it pretends to be, so I
 To make sure the other TCP packets didn't include some useful information too, I also looked through all of them, but actually didn't find anything useful in them.
 
 Additionally, I also looked into the different TLS packets which appear between the many TCP packets. Inside these "Encrypted Handshake Messages" I found the following 5 pieces of information:
+
 ```
-1) Golden Showers Far East 
+1) Golden Showers Far East
 2) Agbogbloshie forwarding
 3) inventory_status=OK.....
 4) randomized_tls_payload_block_01!
@@ -112,6 +121,7 @@ Interestingly, this is the second time "Agbogbloshie" is mentioned. Since I have
 So, I had another look at the first hint concerning the MDNS packets. There I realized that there is a fourth MDNS packet I didn't see before. Packet nr. 11 is the response to one of the above three MDNS requests, namely for `key.version.local`. This packet includes an answer in the TXT format with the value `00b7`. This value probably has something to do with the key which we need to decrypt the content of `stage2.bin`, or maybe it even is the key.
 
 Looking again at the ASCII representation of the content of `stage2.bin` I realized that the characters nr. 1, 3, 5, ... are "normal" characters, while the other characters are more "cryptic" looking. So, maybe only every second character has to be transformed somehow while the other characters stay untouched. This could also explain the hint "not everything here is encrypted the same way" from the `readme.txt`. If we assume the value `00b7` I found before to be the key, XOR encryption/decryption would fit, because when we XOR something with `00b7`, only every second character will be changed. I therefore took the hex representation of the content of `stage2.bin` and XORed it with `00b7`, which finally revealed the flag:
+
 ```
 utflag{...}
 ```
