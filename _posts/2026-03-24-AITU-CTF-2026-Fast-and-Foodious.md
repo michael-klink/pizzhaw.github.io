@@ -3,7 +3,7 @@ layout: post
 title: AITU CTF 2026 Quals - Fast & Foodious (Web)
 date: 2026-03-24
 description: Privilege escalation and skip of a security test
-tags: writeups web go jwt
+tags: writeups web go jwt aituctf
 categories: writeups web
 author: "Guillaume"
 ---
