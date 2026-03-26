@@ -47,7 +47,7 @@ challenge, there will be suitable tasks for every skill level.
 **Important: registration and deadline**
 Registration is required so we can plan enough pizza for everyone.
 
-- Register here: [https://forms.gle/1U3NnEohUASFJ4QL6](https://forms.gle/1U3NnEohUASFJ4QL6])
+- Register here: [https://forms.gle/1U3NnEohUASFJ4QL6](https://forms.gle/1U3NnEohUASFJ4QL6)
 - Registration deadline: **April 3, 2026**
 
 If you have any questions, contact Thomas Sutter (suth) directly. Detailed schedule information will follow one week before the event.
