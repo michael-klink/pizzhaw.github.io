@@ -23,13 +23,8 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-Capture the Flag (CTF) competitions are hands-on cybersecurity challenges where participants solve
-tasks from areas like web security, reverse engineering, forensics, and cryptography. Our team brings
-together students and security enthusiasts from across the ZHAW community to learn and collaborate.
+Capture the Flag (CTF) competitions are hands-on cybersecurity challenges where participants solve tasks from areas like web security, reverse engineering, forensics, and cryptography. Our team brings together students and security enthusiasts from across the ZHAW community to learn and collaborate.
 
-Whether you’re new to CTFs, sharpening your offensive security skills, or looking for a team to grow
-with, you’re in the right place. We explore everything from web exploitation and reverse engineering to
-forensics, cryptography, and more—one flag at a time.
+Whether you’re new to CTFs, sharpening your offensive security skills, or looking for a team to grow with, you’re in the right place. We explore everything from web exploitation and reverse engineering to forensics, cryptography, and more—one flag at a time.
 
-Join us, level up your skills, and take part in a community built on teamwork,
-learning, and a shared passion for security.
+Join us, level up your skills, and take part in a community built on teamwork, learning, and a shared passion for security.
